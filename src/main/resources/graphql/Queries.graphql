@@ -1,0 +1,16 @@
+type Mutation {
+    moveCard(cardId: ID!, columnId: ID!): KanbanCard
+}
+
+type KanbanCard {
+    id: ID!
+    title: String!
+    description: String
+    column: BoardColumn!
+}
+
+type BoardColumn {
+    id: ID!
+    name: String!
+    cards: [KanbanCard]!
+}
