@@ -4,6 +4,7 @@ import com.pablo.taskmanager.model.user.User;
 import com.pablo.taskmanager.repository.user.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
@@ -57,17 +58,26 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User updateUser(Long id, User user) {
-        return null;
-    }
+        Optional<User> existingUser = iUserRepository.findById(id);
+        if (existingUser.isPresent()) {
+            User userToUpdate = existingUser.get();
 
+            userToUpdate.setName(user.getName());
+            userToUpdate.setEmail(user.getEmail());
+
+            return iUserRepository.save(userToUpdate);
+        } else {
+            throw new RuntimeException("User with ID " + id + " not found");
+        }
+    }
 
     @Override
     public void deleteUser(Long id) {
-        try {
+        if (iUserRepository.existsById(id)) {
             iUserRepository.deleteById(id);
-        } catch (Exception e) {
-            throw new RuntimeException("Error while deleting user " + id, e);
+        } else {
+            throw new RuntimeException("User with ID " + id + " not found");
         }
-
     }
+
 }
